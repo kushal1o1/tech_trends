@@ -1,10 +1,14 @@
 from django.db import models
 
-class Trend(models.Model):
+class TechNews(models.Model):
+    CATEGORY_CHOICES = [
+        ('nepali', 'Nepali Tech News'),
+        ('global', 'Global Tech News')
+    ]
+    
     title = models.CharField(max_length=255)
-    description = models.TextField()
-    source_link = models.URLField()  # Field for the source URL
-    timestamp = models.DateTimeField(auto_now_add=True)
-
+    link = models.URLField()
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    
     def __str__(self):
         return self.title

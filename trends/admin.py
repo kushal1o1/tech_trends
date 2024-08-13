@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Trend
+from .models import TechNews
 
-@admin.register(Trend)
-class TrendAdmin(admin.ModelAdmin):
-    list_display = ('title', 'timestamp', 'source_link')
-    search_fields = ('title', 'description')
+@admin.register(TechNews)
+class TechNewsAdmin(admin.ModelAdmin):
+    list_display = ('title','link')
+    search_fields = ['category']

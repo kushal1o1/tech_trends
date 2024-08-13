@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import Trend
+from .models import TechNews
 
-class TrendSerializer(serializers.ModelSerializer):
+class TechNewsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Trend
+        model = TechNews
         fields = '__all__'
