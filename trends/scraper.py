@@ -27,6 +27,7 @@ def scrape_tech_news():
         for article in nepali_tech_articles:
             nepali_tech_title_tag = article.find('h4').find('a')
             nepali_tech_title = nepali_tech_title_tag.text
+            nepali_tech_title = nepali_tech_title.strip()
             nepali_tech_link = url + nepali_tech_title_tag['href']
             print(nepali_tech_title)
             TechNews.objects.update_or_create(
@@ -48,6 +49,7 @@ def scrape_tech_news():
         for article in global_tech_articles:
             global_tech_title_tag = article.find('h4').find('a')
             global_tech_title = global_tech_title_tag.text
+            global_tech_title = global_tech_title.strip()
             global_tech_link = url + global_tech_title_tag['href']
             print(global_tech_title)
             TechNews.objects.update_or_create(
