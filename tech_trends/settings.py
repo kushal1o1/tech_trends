@@ -42,14 +42,15 @@ INSTALLED_APPS = [
     'rest_framework',
     'trends',
    'django_celery_beat',
+   'corsheaders',
 
 ]
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Or your broker URL
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # Or your result backend
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
+CELERY_BROKER_URL = config('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND =  config('CELERY_RESULT_BACKEND')
+CELERY_ACCEPT_CONTENT = config('CELERY_ACCEPT_CONTENT')
+CELERY_TASK_SERIALIZER = config('CELERY_TASK_SERIALIZER')
+CELERY_TIMEZONE = config('CELERY_TIMEZONE')
 
 CELERY_BEAT_SCHEDULE = {
     'scrape-tech-news-every-five-min': {
@@ -63,11 +64,19 @@ CELERY_TIMEZONE = 'UTC'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+CORS_ALLOWED_ORIGINS = [
+   config('cors_allowed_host'), 
+ 
+]
+CORS_ALLOW_METHODS = [
+    'GET',
 ]
 
 ROOT_URLCONF = 'tech_trends.urls'
