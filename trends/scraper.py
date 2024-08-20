@@ -16,21 +16,42 @@ def scrape_tech_news():
     TechNews.objects.filter(category='nepali').delete()
     TechNews.objects.filter(category='global').delete()
     
+#  trending ones
+    try:
+        trending_tech_response = requests.get(nepali_tech_url)
+        trending_tech_response.raise_for_status()
+        trending_tech_soup = BeautifulSoup(trending_tech_response.content, 'html.parser')
+        trending_tech_container = trending_tech_soup.find('div', class_='newsTech_side-wrapper newsTech_side-min-lgflex')
+        trending_tech_articles = trending_tech_container.find_all('li')
+        
+        for article in trending_tech_articles:
+            img_tag = article.find('img')
+            trending_tech_img_url = img_tag['src'] if img_tag and 'src' in img_tag.attrs else None   
+            trending_tech_title_tag = article.find('h4').find('a')
+            trending_tech_title = trending_tech_title_tag.text
+            trending_tech_title = trending_tech_title.strip()
+            trending_tech_link = url + trending_tech_title['href']
+            TechNews.objects.update_or_create(
+                title=trending_tech_title,
+                link=trending_tech_link,
+                category='trending',
+                img_url=trending_tech_img_url
+            )
+    except requests.RequestException as e:
+        logging.error(f"Error fetching Trending  news: {e}")
+    
     # Scrape Nepali Tech News
     try:
-        nepali_tech_response = requests.get(nepali_tech_url)
-        nepali_tech_response.raise_for_status()
-        nepali_tech_soup = BeautifulSoup(nepali_tech_response.content, 'html.parser')
-        nepali_tech_container = nepali_tech_soup.find('div', class_='newsTech_side-wrapper newsTech_side-min-lgflex')
-        nepali_tech_articles = nepali_tech_container.find_all('li')
-        
-        for article in nepali_tech_articles:
-            img_tag = article.find('img')
-            nepali_tech_img_url = img_tag['src'] if img_tag and 'src' in img_tag.attrs else None   
-            nepali_tech_title_tag = article.find('h4').find('a')
-            nepali_tech_title = nepali_tech_title_tag.text
-            nepali_tech_title = nepali_tech_title.strip()
-            nepali_tech_link = url + nepali_tech_title_tag['href']
+        response = requests.get(nepali_tech_url)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        divs = soup.find_all('div', class_='col-sm-6 col-md-4')
+        for div in divs:
+            title_tag = div.find('h4').find('a')
+            nepali_tech_title = title_tag.text.strip()
+            link = title_tag['href']
+            nepali_tech_link= url+link
+            img_tag = div.find('img')
+            nepali_tech_img_url = img_tag['src']
             TechNews.objects.update_or_create(
                 title=nepali_tech_title,
                 link=nepali_tech_link,
@@ -42,19 +63,16 @@ def scrape_tech_news():
 
     # Scrape Global Tech News
     try:
-        global_tech_response = requests.get(global_tech_url)
-        global_tech_response.raise_for_status()
-        global_tech_soup = BeautifulSoup(global_tech_response.content, 'html.parser')
-        global_tech_container = global_tech_soup.find('div', class_='newsTech_side-wrapper newsTech_side-min-lgflex')
-        global_tech_articles = global_tech_container.find_all('li')
-        
-        for article in global_tech_articles:
-            img_tag = article.find('img')
-            global_tech_img_url = img_tag['src'] if img_tag and 'src' in img_tag.attrs else None
-            global_tech_title_tag = article.find('h4').find('a')
-            global_tech_title = global_tech_title_tag.text
-            global_tech_title = global_tech_title.strip()
-            global_tech_link = url + global_tech_title_tag['href']
+        response = requests.get(global_tech_url)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        divs = soup.find_all('div', class_='col-sm-6 col-md-4')
+        for div in divs:
+            title_tag = div.find('h4').find('a')
+            global_tech_title = title_tag.text.strip()
+            link = title_tag['href']
+            global_tech_link= url+link
+            img_tag = div.find('img')
+            global_tech_img_url = img_tag['src']
             TechNews.objects.update_or_create(
                 title=global_tech_title,
                 link=global_tech_link,

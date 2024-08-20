@@ -3,7 +3,9 @@ from django.db import models
 class TechNews(models.Model):
     CATEGORY_CHOICES = [
         ('nepali', 'Nepali Tech News'),
-        ('global', 'Global Tech News')
+        ('global', 'Global Tech News'),
+        ('trending', 'Trending  News')
+        
     ]
     
     title = models.CharField(max_length=255)
