@@ -25,15 +25,17 @@ def scrape_tech_news():
         nepali_tech_articles = nepali_tech_container.find_all('li')
         
         for article in nepali_tech_articles:
+            img_tag = article.find('img')
+            nepali_tech_img_url = img_tag['src'] if img_tag and 'src' in img_tag.attrs else None   
             nepali_tech_title_tag = article.find('h4').find('a')
             nepali_tech_title = nepali_tech_title_tag.text
             nepali_tech_title = nepali_tech_title.strip()
             nepali_tech_link = url + nepali_tech_title_tag['href']
-            print(nepali_tech_title)
             TechNews.objects.update_or_create(
                 title=nepali_tech_title,
                 link=nepali_tech_link,
-                category='nepali'
+                category='nepali',
+                img_url=nepali_tech_img_url
             )
     except requests.RequestException as e:
         logging.error(f"Error fetching Nepali tech news: {e}")
@@ -47,15 +49,17 @@ def scrape_tech_news():
         global_tech_articles = global_tech_container.find_all('li')
         
         for article in global_tech_articles:
+            img_tag = article.find('img')
+            global_tech_img_url = img_tag['src'] if img_tag and 'src' in img_tag.attrs else None
             global_tech_title_tag = article.find('h4').find('a')
             global_tech_title = global_tech_title_tag.text
             global_tech_title = global_tech_title.strip()
             global_tech_link = url + global_tech_title_tag['href']
-            print(global_tech_title)
             TechNews.objects.update_or_create(
                 title=global_tech_title,
                 link=global_tech_link,
-                category='global'
+                category='global',
+                img_url=global_tech_img_url
             )
     except requests.RequestException as e:
         logging.error(f"Error fetching Global tech news: {e}")
