@@ -15,6 +15,8 @@ def scrape_tech_news():
     # Clear existing records
     TechNews.objects.filter(category='nepali').delete()
     TechNews.objects.filter(category='global').delete()
+    TechNews.objects.filter(category='trending').delete()
+    
     
 #  trending ones
     try:
@@ -30,7 +32,8 @@ def scrape_tech_news():
             trending_tech_title_tag = article.find('h4').find('a')
             trending_tech_title = trending_tech_title_tag.text
             trending_tech_title = trending_tech_title.strip()
-            trending_tech_link = url + trending_tech_title['href']
+            trending_tech_link = url + trending_tech_title_tag['href']
+            print(trending_tech_link)
             TechNews.objects.update_or_create(
                 title=trending_tech_title,
                 link=trending_tech_link,
