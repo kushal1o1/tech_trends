@@ -4,7 +4,8 @@ class TechNews(models.Model):
     CATEGORY_CHOICES = [
         ('nepali', 'Nepali Tech News'),
         ('global', 'Global Tech News'),
-        ('trending', 'Trending  News')
+        ('trending', 'Trending  News'),
+        ('ronb','Routine Of Nepal Banda')
         
     ]
     

@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 from decouple import config
 from .models import TechNews
 import logging
+from ntscraper import Nitter
+
 
 def scrape_tech_news():
     logging.info("Starting the tech news update task")
@@ -84,6 +86,22 @@ def scrape_tech_news():
             )
     except requests.RequestException as e:
         logging.error(f"Error fetching Global tech news: {e}")
-
+    try:
+        scraper= Nitter()
+        tweets =scraper.get_tweets('RONBupdates',mode='user',number=20)
+        extracted_data = []
+        for tweet in tweets['tweets']:
+            ronb_title= tweet['text']
+            ronb_img_url = tweet['pictures'][0] if tweet['pictures'] else None
+            ronb_link= tweet['link']
+            TechNews.objects.update_or_create(
+                title=ronb_title,
+                link=ronb_link,
+                category='ronb',
+                img_url=ronb_img_url
+            )
+            
+    except Exception as e:
+        logging.error(f"Error fetching Routine of Nepal Banda news: {e}")
     logging.info("Finished the tech news update task")
     print('DONE KUSHAL')

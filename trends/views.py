@@ -10,4 +10,4 @@ class TechNewsViewSet(viewsets.ModelViewSet):
         category = self.request.query_params.get('category', None)
         if category:
             queryset = queryset.filter(category=category)
-        return queryset
+        return queryset.order_by('?')
