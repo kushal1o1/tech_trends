@@ -11,7 +11,7 @@ global_tech_url = config('global_tech_url')
     
 
 
-def scrape_tech_news():
+def scrape_trending_news():
     with transaction.atomic():
                 TechNews.objects.filter(category='trending').delete()
                 trending_tech_response = requests.get(nepali_tech_url)

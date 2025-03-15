@@ -1,7 +1,6 @@
 import requests
 import logging
-from django.db import transaction
-from service import delete_existing_records, scrape_tech_news, scrape_nepali_tech_news, scrape_global_tech_news, scrape_ronb_news
+from .service import scrape_trending_news, scrape_nepali_tech_news, scrape_global_tech_news, scrape_ronb_news
 
 def scrape_tech_news():
     logging.info("Starting the tech news update task")
@@ -9,7 +8,8 @@ def scrape_tech_news():
     try:
         #  trending ones
             try:
-                scrape_tech_news()
+                if scrape_trending_news():
+                    logging.info("Successfully fetched Trending news")
             except requests.RequestException as e:
                 logging.error(f"Error fetching Trending  news: {e}")
             

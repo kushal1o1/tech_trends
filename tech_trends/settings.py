@@ -18,7 +18,11 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = config('EMAIL_PORT')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -44,6 +48,7 @@ INSTALLED_APPS = [
     'trends',
    'django_celery_beat',
    'corsheaders',
+   "mailApp",
 
 ]
 
@@ -57,6 +62,10 @@ CELERY_BEAT_SCHEDULE = {
     'scrape-tech-news-every-five-min': {
         'task': 'trends.tasks.update_trends',
         'schedule':  60.0,  # every 5 minutes
+    },
+    'send-daily-email': {
+        'task': 'mailApp.tasks.send_daily_email',
+        'schedule': crontab(hour=7, minute=30),  # daily at 7:30 AM
     },
 }
 CELERY_TIMEZONE = 'UTC'
@@ -139,7 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kathmandu'
 
 USE_I18N = True
 
