@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TechNews
+from .models import TechNews, SubscribedCategory, Subscribers
 from django.utils.html import format_html
 
 @admin.register(TechNews)
@@ -12,3 +12,7 @@ class TechNewsAdmin(admin.ModelAdmin):
         return 'No Image'
     
     display_image.short_description = 'Image'
+
+admin.site.register(SubscribedCategory)
+admin.site.register(Subscribers)
+admin.site.site_header = 'Tech News Admin'
