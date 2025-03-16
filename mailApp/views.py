@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import SubscribersSerializer
+from .serializers import SubscribersSerializer,subscribedCategorySerializer
 from rest_framework import viewsets,generics
 from .models import Subscribers,SubscribedCategory
 from rest_framework.response import Response
@@ -106,5 +106,10 @@ class SubscriberViewSet(viewsets.ModelViewSet):
             return Response({
                 
                 "detail":"Subscriber Unsubscribed."
-            },status=200)           
+            },status=200) 
+
+class   SubscribedCategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = SubscribedCategory.objects.all()
+    serializer_class= subscribedCategorySerializer
     
+            

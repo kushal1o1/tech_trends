@@ -18,11 +18,12 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from trends.views import TechNewsViewSet
-from mailApp.views import SubscriberViewSet
+from mailApp.views import SubscriberViewSet,SubscribedCategoryViewSet
 
 router = DefaultRouter()
 router.register(r'trends', TechNewsViewSet)
 router.register(r'subscribers', SubscriberViewSet, basename='subscribers')
+router.register(r"categories",SubscribedCategoryViewSet,basename="categories")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
