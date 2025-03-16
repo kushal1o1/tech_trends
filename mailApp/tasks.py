@@ -40,3 +40,4 @@ def send_daily_email():
         logging.info(f"Email sent to {subscriber.email}")
     logging.info("Finished the daily email task")
     return True
+

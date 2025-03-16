@@ -1,11 +1,18 @@
 from django.shortcuts import render
 from .serializers import SubscribersSerializer,subscribedCategorySerializer
 from rest_framework import viewsets,generics
-from .models import Subscribers,SubscribedCategory
+from .models import Subscribers,SubscribedCategory,VerificationToken
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework import status
+from django.core.mail import send_mail
+from django.conf import settings
+from django.urls import reverse
+from rest_framework.views import APIView
 # Create your views here.
 class SubscriberViewSet(viewsets.ModelViewSet):
     queryset= Subscribers.objects.all()
@@ -35,15 +42,29 @@ class SubscriberViewSet(viewsets.ModelViewSet):
                 categories.append(category)
             except SubscribedCategory.DoesNotExist:
                 raise ValidationError(f"Category '{category_name}' does not exist.")
+        #VERIFY USER FIRST
+        # verifyUser()
+        token = VerificationToken.objects.create(email=email)
 
-        # Create the subscriber and associate categories
+        # Generate the verification link
+        verification_url = request.build_absolute_uri(reverse('verify-email', args=[str(token.token)]))
+
+        # Send email with verification link
+        send_mail(
+            'Please confirm your email',
+            f'Click the link below to verify your email address and complete your subscription:\n\n{verification_url}',
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+         # Create the subscriber and associate categories
         subscriber = Subscribers.objects.create(email=email)
         subscriber.category.set(categories)
         subscriber.save()
-
-        # Serialize the newly created subscriber data
-        serializer = self.get_serializer(subscriber)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({
+            "detail": "A verification email has been sent. Please check your inbox to confirm your subscription."
+        }, status=status.HTTP_200_OK)
+        
     # Update subscriber categories with PATCH /subscribers/update
     @action(detail=False, methods=['patch'], url_path="update")
     def update_categories(self, request):
@@ -112,4 +133,33 @@ class   SubscribedCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SubscribedCategory.objects.all()
     serializer_class= subscribedCategorySerializer
     
+    
+class VerifyEmailView(APIView):
+    def get(self, request, token, *args, **kwargs):
+        try:
+            verification_token = VerificationToken.objects.get(token=token)
+
+            if verification_token.verified:
+                return Response({
+                    "detail": "This email is already verified."
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Mark the token as verified
+            verification_token.verified = True
+            verification_token.save()
+
+            # Create the subscriber instance
+            email = verification_token.email
+            subscriber = Subscribers.objects.filter(email=email).first()
+            subscriber.verified=True
+            subscriber.save()
+
+            return Response({
+                "detail": "Your email has been verified, and your subscription is now active."
+            }, status=status.HTTP_200_OK)
+
+        except VerificationToken.DoesNotExist:
+            return Response({
+                "detail": "Invalid verification token."
+            }, status=status.HTTP_400_BAD_REQUEST)
             
