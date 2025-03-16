@@ -49,6 +49,7 @@ INSTALLED_APPS = [
    'django_celery_beat',
    'corsheaders',
    "mailApp",
+   "drf_yasg"
 
 ]
 
