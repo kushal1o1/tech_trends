@@ -1,0 +1,33 @@
+
+import os
+from django.core.mail import EmailMultiAlternatives
+from tech_trends import settings
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import  urlsafe_base64_encode
+from django.utils.encoding import force_bytes 
+from django.template import Template, Context
+
+def SendConfirmEmail(verification_url,email):
+    # Email Address Confirmation Email
+        from_email = settings.EMAIL_HOST_USER
+        to_list = [email]
+        template_path = os.path.join(settings.BASE_DIR, "mailApp/templates/emails/confirmEmail.html")
+        email_subject = "Confirm for TechTrends Subscriptions"
+        context ={ 
+            "verification_link":verification_url
+        }
+        with open(template_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+
+        django_template = Template(html_content)
+        rendered_html = django_template.render(Context(context))
+        # Replace placeholders manually
+        # for key, value in context.items():
+        #     html_content = html_content.replace(f"{{{{ {key} }}}}", value)  # Replace {{ name }} with actual value
+
+        # Send the email
+        msg = EmailMultiAlternatives(email_subject, "", from_email, to_list)
+        msg.attach_alternative(rendered_html, "text/html")
+        msg.send()
+        msg.failed_silently = True
+        return True

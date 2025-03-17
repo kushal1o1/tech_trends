@@ -13,6 +13,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
 from rest_framework.views import APIView
+from .service import SendConfirmEmail
+from django.db import transaction
 # Create your views here.
 class SubscriberViewSet(viewsets.ModelViewSet):
     queryset= Subscribers.objects.all()
@@ -44,20 +46,17 @@ class SubscriberViewSet(viewsets.ModelViewSet):
                 raise ValidationError(f"Category '{category_name}' does not exist.")
         #VERIFY USER FIRST
         # verifyUser()
-        token = VerificationToken.objects.create(email=email)
+        with transaction.atomic():
+            
+            token = VerificationToken.objects.create(email=email)
 
-        # Generate the verification link
-        verification_url = request.build_absolute_uri(reverse('verify-email', args=[str(token.token)]))
-
-        # Send email with verification link
-        send_mail(
-            'Please confirm your email',
-            f'Click the link below to verify your email address and complete your subscription:\n\n{verification_url}',
-            settings.DEFAULT_FROM_EMAIL,
-            [email],
-            fail_silently=False,
-        )
-         # Create the subscriber and associate categories
+            # Generate the verification link
+            verification_url = request.build_absolute_uri(reverse('verify-email', args=[str(token.token)]))
+            if not SendConfirmEmail(verification_url,email):
+                token.objects.filter(email=email).first().delete()
+                return Response({
+                    "detail": "Something went Off .Sorry Resubscribe "
+                }, status=status.HTTP_400_BAD_REQUEST)
         subscriber = Subscribers.objects.create(email=email)
         subscriber.category.set(categories)
         subscriber.save()
