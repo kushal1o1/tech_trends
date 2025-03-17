@@ -1,0 +1,32 @@
+{% extends 'emails/base.html' %}
+
+{%block title%}New Message Notification - TechTrend {%endblock%}
+    {%block Content%}
+    <style>
+        h1 {
+            color: #222;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        p {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .message-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            font-style: italic;
+            color: #333;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+    </style>
+    <h1>New Message from TechTrends</h1>
+    <p>You have received a new message on <strong>TechTrend</strong>.</p>
+    
+    <div class="message-box">
+        "{{message}}"
+    </div>
+       {%endblock%}

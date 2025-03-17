@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title%}{%endblock%}</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: #ffffff;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .logo {
+            width: 160px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #222;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        p {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .verify-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #007bff, #00d4ff);
+            color: #ffffff;
+            padding: 14px 24px;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+        .verify-button:hover {
+            background: linear-gradient(45deg, #0056b3, #00a6ff);
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.5);
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #777;
+        }
+        .fallback-link {
+            word-wrap: break-word;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .fallback-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="http://127.0.0.1:8000/static/images/TechTrendsLogo.png">
+        {%block Content%}{%endblock%}
+       
+        <div class="footer">
+            <p>&copy; 2025 TechTrend. All rights reserved.</p>
+        </div>
+    </div>
+
+</body>
+</html>

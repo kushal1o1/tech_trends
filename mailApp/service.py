@@ -6,6 +6,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import  urlsafe_base64_encode
 from django.utils.encoding import force_bytes 
 from django.template import Template, Context
+from .models import Subscribers
+
 
 def SendConfirmEmail(verification_url,email):
     # Email Address Confirmation Email
@@ -31,3 +33,28 @@ def SendConfirmEmail(verification_url,email):
         msg.send()
         msg.failed_silently = True
         return True
+    
+def SendNotificationEmail(instance):
+    # Email Address Confirmation Email
+        users = Subscribers.objects.all()
+        from_email = settings.EMAIL_HOST_USER
+        template_path = os.path.join(settings.BASE_DIR, "mailApp/templates/emails/notification.html")
+        email_subject = "Notification Alert !!"
+        context ={ 
+            "message":instance.message
+        }
+        with open(template_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+
+        django_template = Template(html_content)
+        rendered_html = django_template.render(Context(context))
+
+        # Send the email
+       
+        for user in users:
+            msg = EmailMultiAlternatives(email_subject, "", from_email,[user.email])
+            msg.attach_alternative(rendered_html, "text/html")
+            msg.send()
+            msg.failed_silently = True
+        return True
+    
