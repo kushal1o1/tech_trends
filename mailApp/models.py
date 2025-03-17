@@ -30,3 +30,11 @@ class VerificationToken(models.Model):
 
     def __str__(self):
         return f"Verified:{self.verified}-{self.email}"
+    
+
+class Notification(models.Model):
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Notification: {self.message}"
