@@ -62,11 +62,12 @@ CELERY_TIMEZONE = 'UTC'
 CELERY_BEAT_SCHEDULE = {
     'scrape-tech-news-every-five-min': {
         'task': 'trends.tasks.update_trends',
-        'schedule':  60.0,  # every 5 minutes
+        'schedule':  600.0,  # every 5 minutes
     },
     'send-daily-email': {
         'task': 'mailApp.tasks.send_daily_email',
-        'schedule': crontab(hour=7, minute=30),  # daily at 7:30 AM
+        # 'schedule': crontab(hour=7, minute=30),  # daily at 7:30 AM
+        'schedule': crontab(minute='*/2'),  # Runs every 2 minutes
     },
 }
 CELERY_TIMEZONE = 'UTC'

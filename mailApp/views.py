@@ -17,6 +17,7 @@ from .service import SendConfirmEmail
 from django.db import transaction
 # Create your views here.
 class SubscriberViewSet(viewsets.ModelViewSet):
+    
     queryset= Subscribers.objects.all()
     serializer_class = SubscribersSerializer
     
@@ -132,7 +133,6 @@ class   SubscribedCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SubscribedCategory.objects.all()
     serializer_class= subscribedCategorySerializer
     
-    
 class VerifyEmailView(APIView):
     def get(self, request, token, *args, **kwargs):
         try:
@@ -162,3 +162,4 @@ class VerifyEmailView(APIView):
                 "detail": "Invalid verification token."
             }, status=status.HTTP_400_BAD_REQUEST)
             
+

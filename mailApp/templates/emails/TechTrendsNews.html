@@ -1,20 +1,30 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
-       <h1>HELOO USER HAHAHAHAH</h1>
-        
-        <script src="" async defer></script>
-    </body>
-</html>
+{% extends 'emails/base.html' %}
+
+{% block title %}Latest News - TechTrend{% endblock %}
+
+{% block content %}
+    <h1 style="color: #222; font-size: 24px; margin: 0;">Latest News from TechTrend</h1>
+    <p style="color: #555; font-size: 16px; margin: 10px 0 20px;">
+        Stay updated with the latest tech news, trends, and updates.
+    </p>
+
+    <!-- News Items -->
+    {% for news_item in news %}
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-bottom: 1px solid #ddd; padding: 15px 0;">
+        <tr>
+            {% if news_item.img_url %}
+            <td width="80" style="padding-right: 15px;">
+                <img src="{{ news_item.img_url }}" alt="News Image" width="80" height="80" style="border-radius: 5px; display: block;">
+            </td>
+            {% endif %}
+            <td>
+                <p style="margin: 0; color: #007bff; font-size: 14px; font-weight: bold;">{{ news_item.category }}</p>
+                <p style="margin: 5px 0; color: #222; font-size: 16px; font-weight: bold;">{{ news_item.title }}</p>
+                <a href="{{ news_item.link }}" style="display: inline-block; background: #007bff; color: #ffffff; padding: 8px 12px; text-decoration: none; font-size: 14px; border-radius: 4px; font-weight: bold;">Read More</a>
+            </td>
+        </tr>
+    </table>
+    {% empty %}
+    <p style="text-align: center; color: #777;">No news available at the moment.</p>
+    {% endfor %}
+{% endblock %}

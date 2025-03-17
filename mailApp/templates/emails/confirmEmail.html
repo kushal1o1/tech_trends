@@ -1,12 +1,13 @@
 {% extends 'emails/base.html' %}
-{%block title%}Confirm Subscription {%endblock%}
-    {%block Content%}
-        <h1>Confirm Your Email</h1>
-        <p>Welcome to <strong>TechTrend</strong>! Click the button below to verify your email and activate your account.</p>
-        
-        <a href=`{{verification_link}}` class="verify-button">Verify Email</a>
-        
-        <p>If the button doesn’t work, copy and paste the link below into your browser:</p>
-        <p><a href=`{{verification_link}}` class="fallback-link">{{verification_link}}</a></p>
 
-       {%endblock%}
+{% block title %}Confirm Subscription{% endblock %}
+
+{% block content %}
+    <h1>Confirm Your Email</h1>
+    <p>Welcome to <strong>TechTrend</strong>! Click the button below to verify your email and activate your account.</p>
+    
+    <a href="{{ verification_link }}" class="cta-button">Verify Email</a>
+    
+    <p>If the button doesn’t work, copy and paste the link below into your browser:</p>
+    <p><a href="{{ verification_link }}" class="fallback-link">{{ verification_link }}</a></p>
+{% endblock %}
