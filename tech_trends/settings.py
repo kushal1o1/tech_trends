@@ -92,6 +92,8 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_METHODS = [
     'GET',
+    'PATCH',
+    'POST'
 ]
 
 ROOT_URLCONF = 'tech_trends.urls'
