@@ -1,6 +1,6 @@
 import requests
 import logging
-from .service import scrape_trending_news, scrape_nepali_tech_news, scrape_global_tech_news, scrape_ronb_news
+from .service import scrape_trending_news, scrape_nepali_tech_news, scrape_global_tech_news, scrape_ronb_news, scrape_news_api_org,scrape_bbc_news
 
 def scrape_tech_news():
     logging.info("Starting the tech news update task")
@@ -15,19 +15,33 @@ def scrape_tech_news():
             
             # Scrape Nepali Tech News
             try:
-                scrape_nepali_tech_news()
+                if scrape_nepali_tech_news():
+                    logging.info("Successfully fetched Nepali tech news")
             except requests.RequestException as e:
                 logging.error(f"Error fetching Nepali tech news: {e}")
 
             # Scrape Global Tech News
             try:
-               scrape_global_tech_news()
+               if scrape_global_tech_news():
+                    logging.info("Successfully fetched Global tech news")
             except requests.RequestException as e:
                 logging.error(f"Error fetching Global tech news: {e}")
             try:
-                scrape_ronb_news()
+                if scrape_ronb_news():
+                    logging.info("Successfully fetched Routine of Nepal Banda news")
             except Exception as e:
                 logging.error(f"Error fetching Routine of Nepal Banda news: {e}")
+            try:
+                if scrape_bbc_news():
+                    logging.info("Successfully fetched BBC news")
+            except Exception as e:
+                logging.error(f"Error fetching BBC news: {e}")
+            try:
+                if scrape_news_api_org():
+                    logging.info("Successfully fetched News API news")
+            except Exception as e:
+                logging.error(f"Error fetching News API news: {e}")
+                
             logging.info("Finished the tech news update task")
     except Exception as e:
         logging.error(f"Error updating tech news: {e}")

@@ -3,9 +3,11 @@ from django.utils import timezone
 import uuid
 CATEGORY_CHOICES = [
         ('nepali', 'Nepali Tech News'),
-        ('global', 'Global Tech News'),
-        ('trending', 'Trending  News'),
-        ('ronb','Routine Of Nepal Banda')
+        ('global', 'Global Tech News (Nepali)'),
+        ('trending', 'Trending  News(Nepali)'),
+        ('ronb','Routine Of Nepal Banda'),
+        ('bbc','Tech BBC News'),
+        ('newsapinewsapiorg','News API')
         
     ]
 # Create your models here.

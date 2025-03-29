@@ -66,8 +66,8 @@ CELERY_BEAT_SCHEDULE = {
     },
     'send-daily-email': {
         'task': 'mailApp.tasks.send_daily_email',
-        # 'schedule': crontab(hour=7, minute=30),  # daily at 7:30 AM
-        'schedule': crontab(minute='*/2'),  # Runs every 2 minutes
+        'schedule': crontab(hour=7, minute=30),  # daily at 7:30 AM
+        # 'schedule': crontab(minute='*/2'),  # Runs every 2 minutes
     },
 }
 CELERY_TIMEZONE = 'UTC'
