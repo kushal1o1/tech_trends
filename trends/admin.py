@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TechNews
+from .models import TechNews, NewsSources
 from django.utils.html import format_html
 
 @admin.register(TechNews)
@@ -14,3 +14,9 @@ class TechNewsAdmin(admin.ModelAdmin):
     display_image.short_description = 'Image'
 
 admin.site.site_header = 'Tech News Admin'
+
+@admin.register(NewsSources)
+class NewsSourcesAdmin(admin.ModelAdmin):
+    list_display = ('source_name', 'source_url', 'source_image_link', 'source_description')
+    search_fields = ['source_name']
+    list_filter = ['source_name']
