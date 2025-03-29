@@ -25,3 +25,6 @@ done=True
 
 #TODO: Create a token for subscriber to get services like updating,unsubscribing and so on 
 done=False
+
+# TODO:Create a bot to send the email to the subscriber using the Gmail API and schedule it using Django-celery beat
+done=False
