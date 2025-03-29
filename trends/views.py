@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from .models import TechNews
+from .models import TechNews, NewsSources
 from .serializers import TechNewsSerializer, NewsSourcesSerializer
 from rest_framework.exceptions import MethodNotAllowed
 
@@ -27,6 +27,6 @@ class TechNewsViewSet(viewsets.ReadOnlyModelViewSet):
     #     raise MethodNotAllowed('DELETE')
     
 class NewsSourcesViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = TechNews.objects.all()
+    queryset = NewsSources.objects.all()
     serializer_class = NewsSourcesSerializer
     

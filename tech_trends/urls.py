@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from trends.views import TechNewsViewSet
+from trends.views import TechNewsViewSet, NewsSourcesViewSet
 from mailApp.views import SubscriberViewSet,SubscribedCategoryViewSet,VerifyEmailView
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
@@ -42,6 +42,8 @@ router = DefaultRouter()
 router.register(r'trends', TechNewsViewSet)
 router.register(r'subscribers', SubscriberViewSet, basename='subscribers')
 router.register(r"categories",SubscribedCategoryViewSet,basename="categories")
+router.register(r'sources', NewsSourcesViewSet, basename='sources')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
