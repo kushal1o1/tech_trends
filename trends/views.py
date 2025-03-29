@@ -30,6 +30,3 @@ class NewsSourcesViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = TechNews.objects.all()
     serializer_class = NewsSourcesSerializer
     
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset
