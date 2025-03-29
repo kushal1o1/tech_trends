@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from .models import TechNews
-from .serializers import TechNewsSerializer
+from .serializers import TechNewsSerializer, NewsSourcesSerializer
 from rest_framework.exceptions import MethodNotAllowed
 
 class TechNewsViewSet(viewsets.ReadOnlyModelViewSet):
@@ -26,3 +26,10 @@ class TechNewsViewSet(viewsets.ReadOnlyModelViewSet):
     # def destroy(self, request, *args, **kwargs):
     #     raise MethodNotAllowed('DELETE')
     
+class NewsSourcesViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = TechNews.objects.all()
+    serializer_class = NewsSourcesSerializer
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset
