@@ -15,6 +15,10 @@ done=True
 done=False
 
 #TODO:Create a Frontend REact for these features
-done=False
+done=True
 
 #TODO :DOCUMENTING USING SWAGGER drf-yasg
+done=True
+
+#TODO :Create a APi for sources (News SOurces) and render it dynamically in the frontend 
+done=False
