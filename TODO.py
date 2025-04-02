@@ -28,3 +28,6 @@ done=False
 
 # TODO:Create a bot to send the email to the subscriber using the Gmail API and schedule it using Django-celery beat
 done=False
+
+#TODO: Create a robust scraping logic and handle the errors and exceptions
+done=False
