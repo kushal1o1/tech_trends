@@ -21,7 +21,7 @@ class SubscribedCategory(models.Model):
 class Subscribers(models.Model):
     email = models.EmailField(unique=True)
     category =models.ManyToManyField(SubscribedCategory,related_name='subscribers')
-    SuscribeStatus = models.BooleanField(default=True)
+    SuscribeStatus = models.BooleanField(default=False)
     verified=models.BooleanField(default=False)
     
     def __str__(self):

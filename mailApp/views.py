@@ -31,18 +31,29 @@ class SubscriberViewSet(viewsets.ModelViewSet):
             "error": {
                 "code": "VALIDATION_ERROR",
                 "message": "Email and categories are required."
-    }
-}, status=status.HTTP_400_BAD_REQUEST)
+        }
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         # Check if the email already exists in the database
         if Subscribers.objects.filter(email=email).exists():
-            return Response({
-            "success": False,
-            "error": {
-                "code": "VALIDATION_ERROR",
-                "message": "Subscriber with This email Already Exists."
-    }
-}, status=status.HTTP_400_BAD_REQUEST)
+            subscriber=Subscribers.objects.filter(email=email).first()
+            if subscriber.SuscribeStatus==True:
+                return Response({
+                "success": False,
+                "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": f"Email Already Subscribed."
+                }
+                },status=status.HTTP_400_BAD_REQUEST)
+            if subscriber.SuscribeStatus==False:
+                subscriber.delete()
+        #     return Response({
+        #     "success": False,
+        #     "error": {
+        #         "code": "VALIDATION_ERROR",
+        #         "message": "Subscriber with This email Already Exists."
+        # }
+        # }, status=status.HTTP_400_BAD_REQUEST)
         # Validate if categories exist
         categories = []
         for category_item in category_data:
@@ -62,13 +73,21 @@ class SubscriberViewSet(viewsets.ModelViewSet):
         #VERIFY USER FIRST
         # verifyUser()
         with transaction.atomic():
-            
-            token = VerificationToken.objects.create(email=email)
+            try:
+                token = VerificationToken.objects.create(email=email)
+            except:
+                return Response({
+                "success": False,
+                "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": f"Check Your Email Address.We have  Already send Verification Link."
+                }
+                },status=status.HTTP_400_BAD_REQUEST)
 
             # Generate the verification link
             verification_url = request.build_absolute_uri(reverse('verify-email', args=[str(token.token)]))
-            if not SendConfirmEmail(verification_url,email):
-                token.objects.filter(email=email).first().delete()
+            if not SendConfirmEmail(verification_url,email,action="subscribe"):
+                # token.objects.filter(email=email).delete()
                 return Response({
                 "success": False,
                 "error": {
@@ -76,10 +95,10 @@ class SubscriberViewSet(viewsets.ModelViewSet):
                     "message": "Something went Off .Sorry Resubscribe."
                 }
                 },status=status.HTTP_400_BAD_REQUEST)
-        subscriber = Subscribers.objects.create(email=email)
-        subscriber.category.set(categories)
-        subscriber.save()
-        return Response({
+            subscriber = Subscribers.objects.create(email=email)
+            subscriber.category.set(categories)
+            subscriber.save()
+            return Response({
                 "success": True,
                 "message":"A verification email has been sent. Please check your inbox to confirm your subscription.",
                 "data" :{}
@@ -169,7 +188,7 @@ class SubscriberViewSet(viewsets.ModelViewSet):
                 #Let send a verification email to the user to confirm unsubscription 
             with transaction.atomic():
             
-                    token = VerificationToken.objects.create(email=email)
+                    token = VerificationToken.objects.create(email=email,action="unsubscribe")
 
                     # Generate the verification link
                     verification_url = request.build_absolute_uri(reverse('verify-email', args=[str(token.token)]))
@@ -206,30 +225,60 @@ class VerifyEmailView(APIView):
     def get(self, request, token, *args, **kwargs):
         try:
             verification_token = VerificationToken.objects.get(token=token)
-
-            if verification_token.verified:
+            if verification_token.action == "unsubscribe":
+                try:
+                    subscriber = Subscribers.objects.get(email=verification_token.email)
+                    subscriber.SuscribeStatus=False
+                    verification_token.delete()
+                    subscriber.save()
+                except Subscribers.DoesNotExist:
+                    return Response({
+                        "success": False,
+                        "error": {
+                            "code": "VALIDATION_ERROR",
+                            "message": f"Subscriber Not Found."
+                        }
+                        },status=status.HTTP_400_BAD_REQUEST)
                 return Response({
-                "success": False,
-                "error": {
-                    "code": "VALIDATION_ERROR",
-                    "message": f"Email Already Verified"
-                }
-                },status=status.HTTP_400_BAD_REQUEST)
+                    "success": True,
+                    "message":"You have successfully unsubscribed from our newsletter.",
+                    "data" :{}
+                    },status=status.HTTP_200_OK)
+            if verification_token.action == "subscribe":
+                try:
+                    if verification_token.verified:
+                        return Response({
+                        "success": False,
+                        "error": {
+                            "code": "VALIDATION_ERROR",
+                            "message": f"Email Already Verified"
+                        }
+                        },status=status.HTTP_400_BAD_REQUEST)
 
-            # Mark the token as verified
-            verification_token.verified = True
-            verification_token.save()
+                    verification_token.delete()
 
-            # Create the subscriber instance
-            email = verification_token.email
-            subscriber = Subscribers.objects.filter(email=email).first()
-            subscriber.verified=True
-            subscriber.save()
-            return Response({
-                "success": True,
-                "message":"Your email has been verified, and your subscription is now active.",
-                "data" :{}
-                },status=status.HTTP_200_OK)
+                    # Create the subscriber instance
+                    email = verification_token.email
+                    subscriber = Subscribers.objects.filter(email=email).first()
+                    subscriber.verified=True
+                    subscriber.SuscribeStatus=True
+                    subscriber.save()
+                    
+                    return Response({
+                        "success": True,
+                        "message":"Your email has been verified, and your subscription is now active.",
+                        "data" :{}
+                        },status=status.HTTP_200_OK)
+
+                except VerificationToken.DoesNotExist:
+                    return Response({
+                        "success": False,
+                        "error": {
+                            "code": "VALIDATION_ERROR",
+                            "message": f"Invalid Verification Token."
+                        }
+                        },status=status.HTTP_400_BAD_REQUEST)
+
 
         except VerificationToken.DoesNotExist:
             return Response({
@@ -239,4 +288,5 @@ class VerifyEmailView(APIView):
                     "message": f"Invalid Verification Token."
                 }
                 },status=status.HTTP_400_BAD_REQUEST)
-
+                
+      

@@ -24,6 +24,12 @@ def SendConfirmEmail(verification_url,email,action="subsrcibe"):
 
             django_template = Template(html_content)
             rendered_html = django_template.render(Context(context))
+            # Send the email
+            msg = EmailMultiAlternatives(email_subject, "", from_email, to_list)
+            msg.attach_alternative(rendered_html, "text/html")
+            msg.send()
+            msg.failed_silently = True
+            return True
         
         if action == "unsubscribe":
             from_email = settings.EMAIL_HOST_USER
@@ -38,14 +44,14 @@ def SendConfirmEmail(verification_url,email,action="subsrcibe"):
 
             django_template = Template(html_content)
             rendered_html = django_template.render(Context(context))
+            # Send the email
+            msg = EmailMultiAlternatives(email_subject, "", from_email, to_list)
+            msg.attach_alternative(rendered_html, "text/html")
+            msg.send()
+            msg.failed_silently = True
+            return True
 
 
-        # Send the email
-        msg = EmailMultiAlternatives(email_subject, "", from_email, to_list)
-        msg.attach_alternative(rendered_html, "text/html")
-        msg.send()
-        msg.failed_silently = True
-        return True
     
 def SendNotificationEmail(instance):
     # Email Address Confirmation Email
