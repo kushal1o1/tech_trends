@@ -9,7 +9,7 @@ from django.template import Template, Context
 from .models import Subscribers
 
 
-def SendConfirmEmail(verification_url,email,action="subsrcibe"):
+def SendConfirmEmail(verification_url,email,action="subscribe"):
     # Email Address Confirmation Email
         if action == "subscribe":
             from_email = settings.EMAIL_HOST_USER
@@ -36,6 +36,26 @@ def SendConfirmEmail(verification_url,email,action="subsrcibe"):
             to_list = [email]
             template_path = os.path.join(settings.BASE_DIR, "mailApp/templates/emails/unsubscribe.html")
             email_subject = "Unsubscribe for TechTrends Subscriptions"
+            context ={ 
+                "verification_link":verification_url
+            }
+            with open(template_path, "r", encoding="utf-8") as f:
+                html_content = f.read()
+
+            django_template = Template(html_content)
+            rendered_html = django_template.render(Context(context))
+            # Send the email
+            msg = EmailMultiAlternatives(email_subject, "", from_email, to_list)
+            msg.attach_alternative(rendered_html, "text/html")
+            msg.send()
+            msg.failed_silently = True
+            return True
+        
+        if action =="update":
+            from_email = settings.EMAIL_HOST_USER
+            to_list = [email]
+            template_path = os.path.join(settings.BASE_DIR, "mailApp/templates/emails/update_categories.html")
+            email_subject = "Update Categories for TechTrends Subscriptions"
             context ={ 
                 "verification_link":verification_url
             }

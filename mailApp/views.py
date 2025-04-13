@@ -160,13 +160,42 @@ class SubscriberViewSet(viewsets.ModelViewSet):
                     "message": f"Category '{category_name}' does not exist."
                 }
                 },status=status.HTTP_400_BAD_REQUEST)
-        
-        # Update subscriber categories
-        subscriber.category.set(categories)
-        subscriber.save()
 
-        # Return updated subscriber data
-        return Response(SubscribersSerializer(subscriber).data, status=200)
+        with transaction.atomic():
+            try:
+                token = VerificationToken.objects.create(email=email)
+            except:
+                return Response({
+                "success": False,
+                "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": f"Check Your Email Address.We have  Already send Verification Link."
+                }
+                },status=status.HTTP_400_BAD_REQUEST)
+
+            # Generate the verification link
+            verification_url = request.build_absolute_uri(reverse('verify-email', args=[str(token.token)]))
+            if not SendConfirmEmail(verification_url,email,action="update"):
+                # token.objects.filter(email=email).delete()
+                return Response({
+                "success": False,
+                "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": "Something went Off .Sorry Retry."
+                }
+                },status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                "success": True,
+                "message":"A verification email has been sent. Please check your inbox to confirm your subscription.",
+                "data" :{}
+                },status=status.HTTP_200_OK)
+
+        # Update subscriber categories
+        # subscriber.category.set(categories)
+        # subscriber.save()
+
+        # # Return updated subscriber data
+        # return Response(SubscribersSerializer(subscriber).data, status=200)
 
         
         # PATCH subscibers/unsubscribe
@@ -278,6 +307,8 @@ class VerifyEmailView(APIView):
                             "message": f"Invalid Verification Token."
                         }
                         },status=status.HTTP_400_BAD_REQUEST)
+            if verification_token.action == "update":
+                pass
 
 
         except VerificationToken.DoesNotExist:

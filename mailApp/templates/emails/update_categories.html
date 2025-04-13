@@ -1,0 +1,13 @@
+{% extends 'emails/base.html' %}
+
+{% block title %}Confirm Update Categories{% endblock %}
+
+{% block content %}
+    <h1>Are you trying to update categories</h1>
+    <p> <strong>TechTrend</strong>! Click the button below to verify</p>
+    
+    <a href="{{ verification_link }}" class="cta-button">Verify Update</a>
+    
+    <p>If the button doesn’t work, copy and paste the link below into your browser:</p>
+    <p><a href="{{ verification_link }}" class="fallback-link">{{ verification_link }}</a></p>
+{% endblock %}
