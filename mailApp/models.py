@@ -31,6 +31,7 @@ class VerificationToken(models.Model):
     token = models.UUIDField(default=uuid.uuid4, unique=True)
     created_at = models.DateTimeField(default=timezone.now)
     verified = models.BooleanField(default=False)
+    action=models.CharField(max_length=20, default="subscribe")
 
     def __str__(self):
         return f"Verified:{self.verified}-{self.email}"

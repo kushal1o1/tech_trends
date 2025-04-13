@@ -9,23 +9,36 @@ from django.template import Template, Context
 from .models import Subscribers
 
 
-def SendConfirmEmail(verification_url,email):
+def SendConfirmEmail(verification_url,email,action="subsrcibe"):
     # Email Address Confirmation Email
-        from_email = settings.EMAIL_HOST_USER
-        to_list = [email]
-        template_path = os.path.join(settings.BASE_DIR, "mailApp/templates/emails/confirmEmail.html")
-        email_subject = "Confirm for TechTrends Subscriptions"
-        context ={ 
-            "verification_link":verification_url
-        }
-        with open(template_path, "r", encoding="utf-8") as f:
-            html_content = f.read()
+        if action == "subscribe":
+            from_email = settings.EMAIL_HOST_USER
+            to_list = [email]
+            template_path = os.path.join(settings.BASE_DIR, "mailApp/templates/emails/confirmEmail.html")
+            email_subject = "Confirm for TechTrends Subscriptions"
+            context ={ 
+                "verification_link":verification_url
+            }
+            with open(template_path, "r", encoding="utf-8") as f:
+                html_content = f.read()
 
-        django_template = Template(html_content)
-        rendered_html = django_template.render(Context(context))
-        # Replace placeholders manually
-        # for key, value in context.items():
-        #     html_content = html_content.replace(f"{{{{ {key} }}}}", value)  # Replace {{ name }} with actual value
+            django_template = Template(html_content)
+            rendered_html = django_template.render(Context(context))
+        
+        if action == "unsubscribe":
+            from_email = settings.EMAIL_HOST_USER
+            to_list = [email]
+            template_path = os.path.join(settings.BASE_DIR, "mailApp/templates/emails/unsubscribe.html")
+            email_subject = "Unsubscribe for TechTrends Subscriptions"
+            context ={ 
+                "verification_link":verification_url
+            }
+            with open(template_path, "r", encoding="utf-8") as f:
+                html_content = f.read()
+
+            django_template = Template(html_content)
+            rendered_html = django_template.render(Context(context))
+
 
         # Send the email
         msg = EmailMultiAlternatives(email_subject, "", from_email, to_list)

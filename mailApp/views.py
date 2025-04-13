@@ -165,14 +165,37 @@ class SubscriberViewSet(viewsets.ModelViewSet):
                     "message": "Subscriber Not Found."
                 }
                 },status=status.HTTP_400_BAD_REQUEST)
+                
+                #Let send a verification email to the user to confirm unsubscription 
+            with transaction.atomic():
+            
+                    token = VerificationToken.objects.create(email=email)
 
-            subscriber.SuscribeStatus=False
-            subscriber.save()
-            return Response({
-                "success": True,
-                "message":"Sucessfully Unsubscribed",
-                "data" :{}
-                },status=status.HTTP_200_OK)
+                    # Generate the verification link
+                    verification_url = request.build_absolute_uri(reverse('verify-email', args=[str(token.token)]))
+                    if not SendConfirmEmail(verification_url,email,action="unsubscribe"):
+                        token.objects.filter(email=email).first().delete()
+                        return Response({
+                        "success": False,
+                        "error": {
+                            "code": "VALIDATION_ERROR",
+                            "message": "Something went Off .Sorry ReUnsubscribe."
+                        }
+                        },status=status.HTTP_400_BAD_REQUEST)
+                    return Response({
+                        "success": True,
+                        "message":"A verification email has been sent. Please check your inbox to confirm your unsubscription.",
+                        "data" :{}
+                        },status=status.HTTP_200_OK)
+            
+            # subscriber.SuscribeStatus=False
+            # subscriber.save()
+            # return Response({
+            #     "success": True,
+            #     "message":"Sucessfully Unsubscribed",
+            #     "data" :{}
+            #     },status=status.HTTP_200_OK)
+
 
 
 class   SubscribedCategoryViewSet(viewsets.ReadOnlyModelViewSet):
