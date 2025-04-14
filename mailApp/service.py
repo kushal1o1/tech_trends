@@ -52,6 +52,7 @@ def SendConfirmEmail(verification_url,email,action="subscribe"):
             return True
         
         if action =="update":
+            print("sendingmail")
             from_email = settings.EMAIL_HOST_USER
             to_list = [email]
             template_path = os.path.join(settings.BASE_DIR, "mailApp/templates/emails/update_categories.html")
@@ -68,6 +69,7 @@ def SendConfirmEmail(verification_url,email,action="subscribe"):
             msg = EmailMultiAlternatives(email_subject, "", from_email, to_list)
             msg.attach_alternative(rendered_html, "text/html")
             msg.send()
+            print("mail send")
             msg.failed_silently = True
             return True
 

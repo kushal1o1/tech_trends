@@ -32,6 +32,7 @@ class VerificationToken(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     verified = models.BooleanField(default=False)
     action=models.CharField(max_length=20, default="subscribe")
+    data=models.JSONField(null=True, blank=True)  # Store additional data as JSON
 
     def __str__(self):
         return f"Verified:{self.verified}-{self.email}"

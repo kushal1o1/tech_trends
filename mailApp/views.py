@@ -15,6 +15,7 @@ from django.urls import reverse
 from rest_framework.views import APIView
 from .service import SendConfirmEmail
 from django.db import transaction
+
 # Create your views here.
 class SubscriberViewSet(viewsets.ModelViewSet):
     
@@ -135,6 +136,8 @@ class SubscriberViewSet(viewsets.ModelViewSet):
 
         try:
             subscriber = Subscribers.objects.get(email=email)
+            print("here")
+            
         except Subscribers.DoesNotExist:
             return  Response({
                 "success": False,
@@ -163,8 +166,18 @@ class SubscriberViewSet(viewsets.ModelViewSet):
 
         with transaction.atomic():
             try:
-                token = VerificationToken.objects.create(email=email)
+                print("verify")
+                print(categories_data)
+                # create a list from categorydata by taking only name
+                # categories_data = [category.get('name') for category in categories_data]
+                # print(categories_data)
+                # print(categories_data)
+                token = VerificationToken.objects.create(email=email,action="update",data=categories_data)
+                print(token.token)
+                print("token created ")
+                token.save()
             except:
+                print("token not created")
                 return Response({
                 "success": False,
                 "error": {
@@ -177,6 +190,7 @@ class SubscriberViewSet(viewsets.ModelViewSet):
             verification_url = request.build_absolute_uri(reverse('verify-email', args=[str(token.token)]))
             if not SendConfirmEmail(verification_url,email,action="update"):
                 # token.objects.filter(email=email).delete()
+                print("not send mail")
                 return Response({
                 "success": False,
                 "error": {
@@ -308,7 +322,21 @@ class VerifyEmailView(APIView):
                         }
                         },status=status.HTTP_400_BAD_REQUEST)
             if verification_token.action == "update":
-                pass
+                subscriber = Subscribers.objects.get(email=verification_token.email)
+                categories = verification_token.data
+                categories = [SubscribedCategory.objects.get(name=category['name']) for category in categories]
+                # Update subscriber categories
+                subscriber.category.set(categories)
+                subscriber.save()
+                verification_token.delete()
+                # Send a success response
+                return Response({
+                    "success": True,
+                    "message":"Your categories have been updated successfully.",
+                    "data" :{}
+                    },status=status.HTTP_200_OK)
+
+                
 
 
         except VerificationToken.DoesNotExist:
