@@ -15,7 +15,8 @@ from django.urls import reverse
 from rest_framework.views import APIView
 from .service import SendConfirmEmail
 from django.db import transaction
-
+from datetime import timedelta
+from django.utils import timezone
 # Create your views here.
 class SubscriberViewSet(viewsets.ModelViewSet):
     
@@ -231,8 +232,12 @@ class SubscriberViewSet(viewsets.ModelViewSet):
                 #Let send a verification email to the user to confirm unsubscription 
             with transaction.atomic():
             
+                try:
+                    token = VerificationToken.objects.filter(email=email).first()
+                    if token:
+                        token.delete()
+                    # Create a new verification token for unsubscription
                     token = VerificationToken.objects.create(email=email,action="unsubscribe")
-
                     # Generate the verification link
                     verification_url = request.build_absolute_uri(reverse('verify-email', args=[str(token.token)]))
                     if not SendConfirmEmail(verification_url,email,action="unsubscribe"):
@@ -249,7 +254,14 @@ class SubscriberViewSet(viewsets.ModelViewSet):
                         "message":"A verification email has been sent. Please check your inbox to confirm your unsubscription.",
                         "data" :{}
                         },status=status.HTTP_200_OK)
-            
+                except:
+                    return Response({
+                "success": False,
+                "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": f"Check Your Email Address.We have  Already send Verification Link."
+                }
+                },status=status.HTTP_400_BAD_REQUEST)
             # subscriber.SuscribeStatus=False
             # subscriber.save()
             # return Response({
@@ -268,6 +280,15 @@ class VerifyEmailView(APIView):
     def get(self, request, token, *args, **kwargs):
         try:
             verification_token = VerificationToken.objects.get(token=token)
+            if timezone.now() > verification_token.created_at + timedelta(minutes=5):
+                verification_token.delete()  # delete expired token
+                return Response({
+                    "success": False,
+                    "error": {
+                        "code": "VALIDATION_ERROR",
+                        "message": f"Verification Token Expired."
+                    }
+                    },status=status.HTTP_400_BAD_REQUEST)
             if verification_token.action == "unsubscribe":
                 try:
                     subscriber = Subscribers.objects.get(email=verification_token.email)
