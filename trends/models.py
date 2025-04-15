@@ -5,7 +5,9 @@ CATEGORY_CHOICES = [
         ('trending', 'Trending  News(Nepali)'),
         ('ronb','Routine Of Nepal Banda'),
         ('bbc','Tech BBC News'),
-        ('newsapinewsapiorg','News API')
+        ('newsapinewsapiorg','News API'),
+        ('hackernews','Hacker News'),
+
         
     ]
 class TechNews(models.Model):

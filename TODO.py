@@ -31,3 +31,6 @@ done=False
 
 #TODO: Create a robust scraping logic and handle the errors and exceptions
 done=False
+
+# TODO: fix the messages and bad request handling in the views.py file
+done=False
