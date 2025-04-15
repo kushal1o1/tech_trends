@@ -1,6 +1,6 @@
 import requests
 import logging
-from .service import scrape_trending_news, scrape_nepali_tech_news, scrape_global_tech_news, scrape_ronb_news, scrape_news_api_org,scrape_bbc_news
+from .service import scrape_trending_news, scrape_nepali_tech_news, scrape_global_tech_news, scrape_ronb_news, scrape_news_api_org,scrape_bbc_news,get_latest_hacker_news
 
 def scrape_tech_news():
     logging.info("Starting the tech news update task")
@@ -41,6 +41,13 @@ def scrape_tech_news():
                     logging.info("Successfully fetched News API news")
             except Exception as e:
                 logging.error(f"Error fetching News API news: {e}")
+                
+            # Scrape Hacker News
+            try:
+                if get_latest_hacker_news():
+                    logging.info("Successfully fetched Hacker news")
+            except requests.RequestException as e:
+                logging.error(f"Error fetching Hacker news: {e}")
                 
             logging.info("Finished the tech news update task")
     except Exception as e:
