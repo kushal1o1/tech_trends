@@ -1,3 +1,4 @@
+Django
 celery==5.4.0
 django-celery-beat==2.6.0
 django-cors-headers==4.4.0
@@ -8,5 +9,6 @@ redis==5.0.8
 requests==2.31.0
 whitenoise==6.7.0
 beautifulsoup4==4.12.3
-Django==5.0.3
 ntscraper==0.3.16
+drf_yasg
+tweepy
